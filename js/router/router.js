@@ -1,22 +1,38 @@
-import { homeController } from "../controllers/homeController.js";
-import { clearMain } from "../utils/index.js";
+import { initHome } from '../controllers/homeController.js';
+import { initProduct } from '../controllers/productController.js';
+import { initCategory } from '../controllers/categoryController.js';
+import { initCart } from '../controllers/cartController.js';
+import { initCheckout } from '../controllers/checkoutController.js';
 
-export function initRouter() {
-    window.addEventListener("hashchange", handleRoute);
-    window.addEventListener("load", handleRoute);
+const routes = {
+    '/': initHome,
+    '/home': initHome,
+    '/product/:id': (id) => initProduct(id),
+    '/category/:id': (id) => initCategory(id),
+    '/cart': initCart,
+    '/checkout': initCheckout,
+};
+
+function parseRoute(path) {
+    if (path.startsWith('/product/')) return { route: '/product/:id', param: path.split('/')[2] };
+    if (path.startsWith('/category/')) return { route: '/category/:id', param: path.split('/')[2] };
+    return { route: path, param: null };
 }
 
-function handleRoute() {
-    clearMain()
-
-    const hash = window.location.hash || "#/";
-    const cleanHash = hash.replace(/^#\/?/, "")
-    const segments = cleanHash.split("/").filter(Boolean)
-
-    if (segments.length === 0) {
-        homeController();
-        return;
+export function initRouter() {
+    function load() {
+        const { pathname } = window.location;
+        const { route, param } = parseRoute(pathname);
+        const handler = routes[route] || routes['/'];
+        handler(param);
     }
 
-    document.querySelector("#root").innerHTML = `<h1 class="text-2xl font-bold">Side ikke fundet</h1>`;
+    window.addEventListener('popstate', load);
+    load();
+}
+
+export function navigateTo(path) {
+    window.history.pushState({}, '', path);
+    const { route, param } = parseRoute(path);
+    routes[route](param);
 }

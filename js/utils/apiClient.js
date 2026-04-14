@@ -1,26 +1,25 @@
-export const request = async (url, method = 'GET', body) => {
-  if (!url) throw new Error('Missing url');
+const BASE_URL = 'http://localhost:4000/api';   // ← change if your API uses another port
 
-  const response = await fetch(url, {
-    method,
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    ...(body && method !== 'GET' && { body: JSON.stringify(body) })
-  });
+export async function getProducts() {
+    const res = await fetch(`${BASE_URL}/products`);
+    if (!res.ok) throw new Error('Failed to fetch products');
+    return res.json();
+}
 
-  if (response.status === 401) {
-    throw new Error('Unauthorized - please login again');
-  }
+export async function getProductById(id) {
+    const res = await fetch(`${BASE_URL}/products/${id}`);
+    if (!res.ok) throw new Error('Failed to fetch product');
+    return res.json();
+}
 
-  const data = await response.json();
+export async function getCategories() {
+    const res = await fetch(`${BASE_URL}/categories`);
+    if (!res.ok) throw new Error('Failed to fetch categories');
+    return res.json();
+}
 
-  if (!response.ok) {
-    const error = new Error(data?.message || response.statusText);
-    error.status = response.status;
-    throw error;
-  }
-
-  return data;
-};
+export async function getProductsByCategory(categoryId) {
+    const res = await fetch(`${BASE_URL}/products?categoryId=${categoryId}`);
+    if (!res.ok) throw new Error('Failed to fetch');
+    return res.json();
+}

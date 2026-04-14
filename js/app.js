@@ -1,13 +1,17 @@
-import renderHeader from "./views/partials/headerView.js"
-import { initRouter } from "./router/router.js"
-import renderNav from "./views/partials/navView.js"
-import renderFooter from "./views/partials/footerView.js"
+import { initRouter } from './js/router/router.js';
+import { renderCookieBanner } from './js/views/components/cookieBanner.js';
 
-const initApp = () => {
-  renderHeader()
-  renderNav()
-  renderFooter()
-  initRouter()
+function initTailwind() {
+    tailwind.config = { content: [], theme: { extend: {} } };
 }
 
-initApp()
+document.addEventListener('DOMContentLoaded', () => {
+    initTailwind();
+    initRouter();
+
+    // Cookie banner on first visit
+    if (!localStorage.getItem('cookieConsent')) {
+        const bannerHTML = renderCookieBanner();
+        document.getElementById('app').insertAdjacentHTML('beforeend', bannerHTML);
+    }
+});
