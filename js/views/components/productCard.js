@@ -1,29 +1,38 @@
-import { addToCart } from '../../utils/cart.js';
-import { trackAddToCart } from '../../utils/analytics.js';
+/**
+ * Genererer HTML for et enkelt produkt-kort (bruges i grids)
+ * @param {Object} product - Produktdata fra API'et
+ */
+export function productCard(product) {
+    const API_URL = 'http://localhost:4000';
 
-export function renderProductCard(product) {
     return `
-    <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow hover:shadow-lg transition-all">
-        <img src="${product.imageUrl || 'https://picsum.photos/id/1015/400/250'}" alt="${product.name}" class="w-full h-48 object-cover">
-        <div class="p-5">
-            <h3 class="font-semibold text-lg">${product.name}</h3>
-            <p class="text-sm text-gray-500 line-clamp-2 mt-1">${product.description.substring(0, 90)}...</p>
-            <div class="flex justify-between items-end mt-6">
-                <div>
-                    <span class="text-2xl font-bold">${product.price.toFixed(2)} DKK</span>
-                </div>
-                <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">På lager</span>
-            </div>
-            <button onclick="handleAddToCart(${product.id}, '${product.name}', ${product.price})" 
-                    class="mt-5 w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl text-sm font-semibold">
-                Læg i kurv
-            </button>
-        </div>
-    </div>`;
-}
+    <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all group flex flex-col h-full">
+        <a href="#/product/${product.slug}" class="block bg-gray-50 overflow-hidden relative pt-[75%]">
+            <img src="${API_URL}${product.imageUrl}" 
+                 alt="${product.name}" 
+                 class="absolute top-0 left-0 w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500">
+        </a>
 
-window.handleAddToCart = (id, name, price) => {
-    addToCart({ id, name, price, imageUrl: '' }, 1);
-    trackAddToCart({ name });
-    alert('Tilføjet til kurv!'); // or update a toast
-};
+        <div class="p-6 flex flex-col flex-grow space-y-3">
+            <div class="flex justify-between items-start">
+                <h3 class="font-black text-[#0a2a4a] text-lg leading-tight uppercase tracking-tighter">
+                    <a href="#/product/${product.slug}" class="hover:text-yellow-500 transition-colors">
+                        ${product.name}
+                    </a>
+                </h3>
+            </div>
+            
+            <p class="text-gray-500 text-sm line-clamp-2 italic flex-grow">
+                "${product.teaser}"
+            </p>
+
+            <div class="pt-4 border-t border-gray-50 flex justify-between items-center">
+                <span class="text-2xl font-black text-[#0a2a4a]">${product.price.toFixed(2)} DKK</span>
+                <button class="bg-[#0a2a4a] text-white p-3 rounded-xl hover:bg-yellow-400 hover:text-black transition-colors shadow-md">
+                    <span class="text-xl">🛒</span>
+                </button>
+            </div>
+        </div>
+    </article>
+    `;
+}

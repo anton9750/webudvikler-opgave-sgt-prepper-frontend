@@ -11,7 +11,9 @@ export function renderCart(cart, total) {
                 <span>Total:</span>
                 <span class="font-bold">${total.toFixed(2)} DKK</span>
             </div>
-            <a onclick="navigateTo('/checkout')" class="block text-center mt-8 bg-green-600 text-white py-4 rounded-2xl font-semibold">Gå til bestilling</a>
+            <a onclick="navigateTo('/checkout')" class="block text-center mt-8 bg-green-600 text-white py-4 rounded-2xl font-semibold cursor-pointer hover:bg-green-700 transition-colors">
+    Gå til bestilling
+</a>
         </div>
         ${renderFooter()}
     `;

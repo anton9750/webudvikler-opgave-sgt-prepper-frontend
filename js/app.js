@@ -1,17 +1,13 @@
-import { initRouter } from './js/router/router.js';
-import { renderCookieBanner } from './js/views/components/cookieBanner.js';
-
-function initTailwind() {
-    tailwind.config = { content: [], theme: { extend: {} } };
-}
+import { initRouter } from './router/router.js'; // Tjek din sti, den skal matche din struktur
+import { renderCookieBanner } from './views/components/cookieBanner.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    initTailwind();
+ 
     initRouter();
 
-    // Cookie banner on first visit
     if (!localStorage.getItem('cookieConsent')) {
         const bannerHTML = renderCookieBanner();
-        document.getElementById('app').insertAdjacentHTML('beforeend', bannerHTML);
+        const appEl = document.getElementById('app');
+        if(appEl) appEl.insertAdjacentHTML('beforeend', bannerHTML);
     }
 });

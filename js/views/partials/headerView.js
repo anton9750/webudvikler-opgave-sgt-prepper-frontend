@@ -1,37 +1,34 @@
-export default function renderHeader() {
-  const header = document.querySelector("#header");
-  header.innerHTML = `
-    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between bg-[#0f172a] text-white">
-      <!-- Logo -->
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center text-3xl">🏔️</div>
-        <span class="text-3xl font-bold tracking-tighter">Sgt PREPPER</span>
-      </div>
+// Vi importerer Nav-komponenten (husk at tjekke stien i din egen mappe)
+import { Nav } from '../components/nav.js';
 
-      <!-- Main navigation tabs (exactly as in Figma) -->
-      <nav class="hidden md:flex gap-8 text-sm font-medium">
-        <a href="#/" class="hover:text-amber-300">Hjem og overnatning</a>
-        <a href="#/" class="hover:text-amber-300">Mad og brugsforbrug</a>
-        <a href="#/" class="hover:text-amber-300">F. sengel og belysning</a>
-        <a href="#/" class="hover:text-amber-300">Køretøjer og vildmark</a>
-        <a href="#/" class="hover:text-amber-300">Kommunikation og navigation</a>
-      </nav>
+/**
+ * Genererer HTML for sitets header
+ */
+export function renderHeader() {
+    return `
+    <header class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+            <a href="#/" class="flex items-center gap-3 group">
+                <div class="bg-[#0a2a4a] text-white p-2 rounded-lg group-hover:bg-yellow-400 group-hover:text-black transition-colors">
+                    <span class="text-2xl font-bold italic uppercase leading-none">SP</span>
+                </div>
+                <h1 class="text-2xl font-black tracking-tighter text-[#0a2a4a]">SGT. PREPPER</h1>
+            </a>
 
-      <!-- Right side -->
-      <div class="flex items-center gap-6">
-        <a href="#/profile" class="text-sm font-medium hover:text-amber-300">Log ind</a>
-        <a href="#/cart" class="flex items-center gap-2 hover:text-amber-300">
-          <span class="text-3xl">🛒</span>
-          <span id="cart-count" class="bg-amber-400 text-black text-xs font-bold px-2.5 py-px rounded-full">0</span>
-        </a>
-      </div>
-    </div>
-  `;
+            <div class="flex items-center gap-8">
+                <a href="#/cart" class="relative group">
+                    <span class="text-2xl">🛒</span>
+                    <span class="absolute -top-2 -right-2 bg-yellow-400 text-black text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-white group-hover:scale-110 transition-transform">
+                        0
+                    </span>
+                </a>
+                <button class="text-sm font-bold uppercase tracking-widest text-gray-400 hover:text-[#0a2a4a]">Menu</button>
+            </div>
+        </div>
+
+        <div class="border-t border-gray-50 bg-gray-50/50">
+            ${Nav()}
+        </div>
+    </header>
+    `;
 }
-
-
-  const countEl = document.getElementById("cart-count");
-  if (countEl) {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    countEl.textContent = cart.reduce((sum, item) => sum + (item.qty || 1), 0);
-  }
