@@ -1,26 +1,18 @@
-/**
- * Genererer HTML for et enkelt produkt-kort (bruges i grids)
- * @param {Object} product - Produktdata fra API'et
- */
 export function productCard(product) {
     const API_URL = 'http://localhost:4000';
 
     return `
     <article class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all group flex flex-col h-full">
-        <a href="#/product/${product.slug}" class="block bg-gray-50 overflow-hidden relative pt-[75%]">
+        <div class="block bg-gray-50 overflow-hidden relative pt-[75%]">
             <img src="${API_URL}${product.imageUrl}" 
                  alt="${product.name}" 
                  class="absolute top-0 left-0 w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500">
-        </a>
+        </div>
 
         <div class="p-6 flex flex-col flex-grow space-y-3">
-            <div class="flex justify-between items-start">
-                <h3 class="font-black text-[#0a2a4a] text-lg leading-tight uppercase tracking-tighter">
-                    <a href="#/product/${product.slug}" class="hover:text-yellow-500 transition-colors">
-                        ${product.name}
-                    </a>
-                </h3>
-            </div>
+            <h3 class="font-black text-[#0a2a4a] text-lg uppercase tracking-tighter italic">
+                ${product.name}
+            </h3>
             
             <p class="text-gray-500 text-sm line-clamp-2 italic flex-grow">
                 "${product.teaser}"
@@ -28,7 +20,10 @@ export function productCard(product) {
 
             <div class="pt-4 border-t border-gray-50 flex justify-between items-center">
                 <span class="text-2xl font-black text-[#0a2a4a]">${product.price.toFixed(2)} DKK</span>
-                <button class="bg-[#0a2a4a] text-white p-3 rounded-xl hover:bg-yellow-400 hover:text-black transition-colors shadow-md">
+                <button 
+                    onclick="window.quickAdd(${product.id})"
+                    class="bg-[#0a2a4a] text-white p-3 rounded-xl hover:bg-yellow-400 hover:text-black transition-all shadow-md active:scale-90"
+                >
                     <span class="text-xl">🛒</span>
                 </button>
             </div>
