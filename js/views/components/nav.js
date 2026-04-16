@@ -1,19 +1,21 @@
-import { fetchCategories } from "../../models/categoryModel.js";
-
-export async function Nav() {
-    const categories = await fetchCategories();
-
+export function Nav(categories = []) {
     return `
-    <nav class="bg-[#0a2a4a] text-white py-4 shadow-inner">
-        <div class="max-w-7xl mx-auto px-6 flex items-center gap-10 whitespace-nowrap text-[12px] uppercase tracking-widest font-black">
-            <a href="#/" class="hover:text-yellow-400 flex items-center gap-2 group transition-colors">
-                <span class="text-lg group-hover:scale-110 transition-transform">⚡</span> ALLE PRODUKTER
+    <nav class="bg-[#1a2b3c] text-white py-2">
+        <div class="max-w-7xl mx-auto px-6 flex items-center justify-between whitespace-nowrap text-[10px] uppercase font-bold tracking-tight overflow-x-auto no-scrollbar gap-6">
+            <a href="#/" class="flex items-center gap-1 hover:text-yellow-400 transition-colors">
+                <span class="text-yellow-500">⚡</span> ALLE PRODUKTER
             </a>
-            ${categories.map(cat => `
-                <a href="#/category/${cat.slug}" class="hover:text-yellow-400 flex items-center gap-2 group transition-colors">
-                    <span class="text-lg group-hover:scale-110 transition-transform">⚡</span> ${cat.title}
+            
+            ${categories.map(cat => {
+                // VIKTIGT: Vi tjekker her hvad vi har til rådighed (id eller slug)
+                const path = cat.id; 
+                
+                return `
+                <a href="#/category/${path}" class="flex items-center gap-1 hover:text-yellow-400 transition-colors">
+                    <span class="text-yellow-500">⚡</span> ${cat.title}
                 </a>
-            `).join("")}
+                `;
+            }).join("")}
         </div>
     </nav>`;
 }

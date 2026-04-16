@@ -1,43 +1,37 @@
 import { initHome } from '../controllers/homeController.js';
-import { initProduct } from '../controllers/productController.js';
+import { initProductDetail } from '../controllers/productController.js';
 import { initCategory } from '../controllers/categoryController.js';
-import { initCart } from '../controllers/cartController.js';
-import { initCheckout } from '../controllers/checkoutController.js';
 
 const routes = {
     '/': initHome,
-    '/product/:id': (id) => initProduct(id),
-    '/category/:id': (id) => initCategory(id),
-    '/cart': initCart,
-    '/checkout': initCheckout,
+    '/category/:id': initCategory,
+    '/product/:id': initProductDetail
 };
 
-function parseRoute(hash) {
-    // Fjern '#' fra starten (f.eks. "#/product/1" bliver til "/product/1")
-    const path = hash.replace(/^#/, '') || '/';
-    
-    if (path.startsWith('/product/')) return { route: '/product/:id', param: path.split('/')[2] };
-    if (path.startsWith('/category/')) return { route: '/category/:id', param: path.split('/')[2] };
-    
-    return { route: path, param: null };
-}
-
-export function initRouter() {
-    function load() {
-        const hash = window.location.hash || '#/';
-        const { route, param } = parseRoute(hash);
-        const handler = routes[route] || routes['/'];
-        handler(param);
+function parseLocation() {
+    const hash = location.hash.slice(1).toLowerCase() || '/';
+    for (const path in routes) {
+        const routeParts = path.split('/');
+        const hashParts = hash.split('/');
+        if (routeParts.length !== hashParts.length) continue;
+        const params = {};
+        const isMatch = routeParts.every((part, i) => {
+            if (part.startsWith(':')) {
+                params[part.slice(1)] = hashParts[i];
+                return true;
+            }
+            return part === hashParts[i];
+        });
+        if (isMatch) return { controller: routes[path], params };
     }
-
-    // Lyt på hash-ændringer i stedet for popstate
-    window.addEventListener('hashchange', load);
-    load();
+    return null;
 }
 
-// Navigering er nu simplere - vi ændrer bare hashen direkte
-export function navigateTo(path) {
-    window.location.hash = path;
+export async function initRouter() {
+    const loadPage = async () => {
+        const match = parseLocation();
+        if (match) await match.controller(match.params);
+    };
+    window.addEventListener('hashchange', loadPage);
+    loadPage();
 }
-
-window.navigateTo = navigateTo; // Gør den global så onclick virker

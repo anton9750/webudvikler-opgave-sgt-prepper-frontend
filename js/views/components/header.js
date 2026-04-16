@@ -1,4 +1,6 @@
-export function renderHeader() {
+import { Nav } from './nav.js'; // Sørg for at stien passer til din filstruktur
+
+export function renderHeader(categories = []) {
     return `
     <header class="bg-[#0a2a4a] text-white sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6">
@@ -19,6 +21,10 @@ export function renderHeader() {
                     </a>
                 </div>
             </div>
+            
+            <div class="py-2">
+                ${Nav(categories)}
             </div>
+        </div>
     </header>`;
 }

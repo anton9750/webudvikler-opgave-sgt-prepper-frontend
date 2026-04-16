@@ -1,16 +1,27 @@
-import { getProducts, getProductBySlug } from '../utils/apiClient.js';
+import { getProducts, getProductById } from '../utils/apiClient.js';
 
 /**
- * Bruges af HomeController til at vise alle produkter på forsiden
+ * Henter alle produkter (bruges til forsiden)
  */
-export async function fetchProducts() { 
-    return await getProducts(); 
+export async function fetchProducts() {
+    try {
+        const products = await getProducts();
+        return products;
+    } catch (error) {
+        console.error("Fejl i fetchProducts:", error);
+        return [];
+    }
 }
 
 /**
- * Bruges af ProductController til at vise detaljer for ét produkt
- * @param {string} slug - Produktets unikke tekst-ID
+ * Henter ét specifikt produkt baseret på ID
  */
-export async function fetchProductBySlug(slug) { 
-    return await getProductBySlug(slug); 
+export async function fetchProductById(id) {
+    try {
+        const product = await getProductById(id);
+        return product;
+    } catch (error) {
+        console.error(`Fejl i fetchProductById for ID ${id}:`, error);
+        throw error;
+    }
 }
