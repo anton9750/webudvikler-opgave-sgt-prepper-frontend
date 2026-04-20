@@ -1,10 +1,14 @@
 import { Nav } from './nav.js';
+import { isAuthenticated, logout } from '../../models/authModel.js';
 
 export function renderHeader(categories = []) {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const loggedIn = isAuthenticated(); // Tjekker om vi har en token
 
+    // --- Event Listeners (Kun hvis de ikke er aktive) ---
     if (!window.headerListenerActive) {
+        // Lytter efter ændringer i kurven
         window.addEventListener('cartUpdated', () => {
             const el = document.getElementById('cart-count-header');
             if (el) {
@@ -12,9 +16,18 @@ export function renderHeader(categories = []) {
                 el.innerText = updatedCart.reduce((sum, item) => sum + item.quantity, 0);
             }
         });
+
+        // NY: Lytter efter login/logout, så headeren tegner sig selv forfra
+        window.addEventListener('authChange', () => {
+            // Vi genindlæser routeren eller re-renderer headeren
+            // Den nemmeste måde i en SPA er at trigge et hashchange
+            location.reload(); 
+        });
+
         window.headerListenerActive = true;
     }
 
+    // --- Globale funktioner til knapper ---
     window.handleClearCart = () => {
         if(confirm("Vil du tømme din indkøbskurv?")) {
             localStorage.removeItem('cart');
@@ -22,6 +35,13 @@ export function renderHeader(categories = []) {
         }
     };
 
+    window.handleLogout = () => {
+        if(confirm("Vil du logge ud af bunkeren?")) {
+            logout();
+        }
+    };
+
+    // --- Selve HTML strukturen ---
     return `
     <header class="bg-[#0a2a4a] text-white sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6">
@@ -49,9 +69,20 @@ export function renderHeader(categories = []) {
                         </button>
                     </div>
 
-                    <a href="#/login" class="hover:text-yellow-400 flex items-center gap-2 transition-colors">
-                        <i class="fas fa-user"></i> Log ind
-                    </a>
+                    ${loggedIn ? `
+                        <div class="flex items-center gap-4">
+                            <a href="#/profile" class="text-yellow-400 flex items-center gap-2 hover:text-white transition-colors">
+                                <i class="fas fa-user-shield"></i> Min Profil
+                            </a>
+                            <button onclick="handleLogout()" class="text-[9px] bg-red-600/20 hover:bg-red-600 px-2 py-0.5 rounded border border-red-500/50 transition-all">
+                                Log ud
+                            </button>
+                        </div>
+                    ` : `
+                        <a href="#/login" class="hover:text-yellow-400 flex items-center gap-2 transition-colors">
+                            <i class="fas fa-user"></i> Log ind
+                        </a>
+                    `}
                 </div>
             </div>
             

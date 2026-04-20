@@ -23,3 +23,23 @@ export function clearCart() {
     localStorage.removeItem('cart');
     window.dispatchEvent(new Event('cartUpdated'));
 }
+
+export function getCartItems() {
+    // Returnerer det aktuelle indhold af kurven som et array
+    return JSON.parse(localStorage.getItem('cart')) || [];
+}
+
+export function removeFromCart(productId) {
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+
+    cart = cart.filter(item => item.id !== productId);
+    
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
+
+    window.dispatchEvent(new Event('cartUpdated'));
+}
+
