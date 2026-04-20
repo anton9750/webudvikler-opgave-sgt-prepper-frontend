@@ -1,10 +1,11 @@
 import { initHome } from '../controllers/homeController.js';
 import { initProductDetail } from '../controllers/productController.js';
 import { initCategory } from '../controllers/categoryController.js';
+// 1. TILFØJ DENNE IMPORT:
+import { initLogin } from '../controllers/loginController.js'; 
 
-// TJEK DISSE NAVNE: Hedder de .js til sidst? Og er navnene 100% rigtige?
 import { renderPrivacyPage } from '../views/pages/privacyView.js';
-import { renderTermsPage } from '../views/pages/termsView.js'; // Retet fra termsPage til termsView
+import { renderTermsPage } from '../views/pages/termsView.js';
 import { renderAboutPage } from '../views/pages/aboutView.js';
 
 import { fetchCategories } from '../models/categoryModel.js';
@@ -13,6 +14,9 @@ const routes = {
     '/': initHome,
     '/category/:id': initCategory,
     '/product/:id': initProductDetail,
+    // 2. TILFØJ DENNE RUTEN:
+    '/login': initLogin, 
+    
     '/privacy': 'privacy',
     '/terms': 'terms',
     '/about': 'about'
@@ -45,11 +49,10 @@ export async function initRouter() {
         const match = parseLocation();
         if (!match) return;
 
-        // Håndter de almindelige controllere
+        // Her tjekker routeren om 'route' er en funktion (som f.eks. initLogin)
         if (typeof match.route === 'function') {
             await match.route(match.params);
         } 
-        // Håndter de statiske sider (About, Privacy, Terms)
         else {
             const categories = await fetchCategories();
             if (match.route === 'privacy') renderPrivacyPage(categories);
