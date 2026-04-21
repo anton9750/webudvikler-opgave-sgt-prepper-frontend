@@ -41,3 +41,4 @@ export function renderProductPage(product, categories) {
         ${renderFooter()}
     `;
 }
+

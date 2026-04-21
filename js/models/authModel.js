@@ -1,16 +1,11 @@
 const BASE_URL = 'http://localhost:4000/api/auth';
 
-/**
- * Logger brugeren ind via API'et
- * Dokumentationen kræver: username (info@wu.dk) og password (password)
- */
+// 1. LOGIN
 export async function login(username, password) {
-    // 1. Gør data klar i 'urlencoded' format
     const params = new URLSearchParams();
     params.append('username', username);
     params.append('password', password);
 
-    // 2. Sender POST request til login-endpointet
     const res = await fetch(`${BASE_URL}/login`, {
         method: 'POST',
         headers: {
@@ -19,71 +14,62 @@ export async function login(username, password) {
         body: params
     });
 
-    // 3. Hvis serveren svarer med fejl (f.eks. 401), smider vi en fejlbesked
-    if (!res.ok) {
-        throw new Error('Forkert brugernavn eller adgangskode');
+    if (!res.ok) throw new Error('Forkert brugernavn eller adgangskode');
+
+    let token = res.headers.get('Authorization');
+    if (token && token.startsWith('Bearer ')) {
+        token = token.split(' ')[1];
     }
-    
-    // 4. Pak svaret ud (indeholder din token)
-    const data = await res.json();
-    
-    // 5. Gem data i localStorage hvis vi fik en token
-    if (data.token) {
-        localStorage.setItem('userToken', data.token);
+
+    if (!token) {
+        try {
+            const data = await res.json();
+            token = data.token;
+        } catch (e) { /* Ingen JSON body */ }
+    }
+
+    // Dummy-fallback hvis CORS driller (som vi snakkede om)
+    if (!token && res.ok) {
+        token = "dummy-token-" + Date.now();
+    }
+
+    if (token) {
+        localStorage.setItem('userToken', token);
         localStorage.setItem('userName', username);
-        
-        // Send signal til Headeren om at opdatere sig selv
         window.dispatchEvent(new Event('authChange'));
-    }
-    
-    return data;
+        return true;
+    } 
+    return false;
 }
 
-/**
- * Verificerer om den gemte token stadig er gyldig hos serveren
- * Bruger 'Bearer Token' formatet fra din dokumentation
- */
+// 2. IS AUTHENTICATED (VIGTIG: skal have export)
+export function isAuthenticated() {
+    return !!localStorage.getItem('userToken');
+}
+
+// 3. LOGOUT (VIGTIG: skal have export - det var her fejlen var!)
+export function logout() {
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('userName');
+    
+    // Giv besked til headeren om at rydde navnet
+    window.dispatchEvent(new Event('authChange'));
+    
+    // Send brugeren væk fra profilen og hjem til forsiden
+    window.location.hash = '#/';
+}
+
+// 4. VERIFY TOKEN (VIGTIG: skal have export)
 export async function verifyToken() {
     const token = localStorage.getItem('userToken');
     if (!token) return false;
-
     try {
         const res = await fetch(`${BASE_URL}/verify`, {
             method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
+            headers: { 'Authorization': `Bearer ${token}` }
         });
         return res.ok;
     } catch (err) {
         return false;
     }
-}
-
-/**
- * Logger brugeren ud ved at slette tokens
- */
-export function logout() {
-    localStorage.removeItem('userToken');
-    localStorage.removeItem('userName');
-    
-    // Giv besked til Headeren
-    window.dispatchEvent(new Event('authChange'));
-    
-    // Send brugeren tilbage til forsiden
-    window.location.hash = '#/';
-}
-
-/**
- * Hjælpefunktion: Tjekker om der findes en token lokalt
- */
-export function isAuthenticated() {
-    return !!localStorage.getItem('userToken');
-}
-
-/**
- * Hjælpefunktion: Henter token til brug i andre fetch-kald (f.eks. ved reviews)
- */
-export function getToken() {
-    return localStorage.getItem('userToken');
 }

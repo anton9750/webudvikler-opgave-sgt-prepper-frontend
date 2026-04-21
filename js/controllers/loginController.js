@@ -1,44 +1,58 @@
 import { fetchCategories } from '../models/categoryModel.js';
 import { renderLoginPage } from '../views/pages/loginView.js';
-import { login } from '../models/authModel.js'; // Vi importerer login-funktionen fra din model
+import { login } from '../models/authModel.js';
 
+/**
+ * Initialiserer login-siden.
+ * Denne funktion eksporteres, så routeren kan kalde den.
+ */
 export async function initLogin() {
     try {
-        // 1. Hent kategorier så menuen i toppen ser rigtig ud
+        // 1. Hent kategorier til navigationsmenuen
         const categories = await fetchCategories();
         
-        // 2. Tegn siden
+        // 2. Render selve login-siden via viewet
         renderLoginPage(categories);
 
-        // 3. Find formularen i det DOM-træ vi lige har tegnet
+        // 3. Find formularen og fejl-elementet i DOM'en
         const form = document.getElementById('login-form');
         const errorEl = document.getElementById('login-error');
 
-        // 4. Lyt efter submit-eventet
+        // Stop hvis formen ikke findes (sikkerhedstjek)
+        if (!form) return;
+
+        // 4. Lyt efter submit-eventet på formularen
         form.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Stop siden fra at refreshe
+            e.preventDefault(); // Forhindrer siden i at genindlæse
             
-            // Hent værdier fra de to input-felter
+            // Hent værdier fra input-felterne (name="username" og name="password")
             const username = form.username.value;
             const password = form.password.value;
 
             try {
-                // Kald modellen og vent på svar fra API'et
-                await login(username, password);
+                // Forsøg at logge ind via din authModel
+                // Vi bruger 'await' for at sikre, at vi har en token før vi går videre
+                const success = await login(username, password);
                 
-                // Hvis det lykkedes: Send brugeren til forsiden
-                window.location.hash = '#/';
-                
-                // Vi sender et signal så Headeren ved den skal opdatere sig
-                window.dispatchEvent(new Event('authChange'));
+                if (success) {
+                    // Giv besked til Headeren om at opdatere (vis brugernavn i stedet for login-knap)
+                    window.dispatchEvent(new Event('authChange'));
+                    
+                    // Skift rute til profilen
+                    // Dette udløser din router.js til at køre initProfile
+                    window.location.hash = '#/profile';
+                }
                 
             } catch (err) {
-                // Hvis det fejler (forkert password): Vis fejlen i rød tekst
-                errorEl.innerText = err.message;
-                errorEl.classList.remove('hidden');
+                // Hvis login fejler (f.eks. 401 fra serveren)
+                if (errorEl) {
+                    errorEl.innerText = err.message;
+                    errorEl.classList.remove('hidden');
+                }
+                console.error("Login fejl:", err.message);
             }
         });
-    } catch (e) {
-        console.error("Fejl i LoginController:", e);
+    } catch (error) {
+        console.error("Fejl under initialisering af login-siden:", error);
     }
 }
