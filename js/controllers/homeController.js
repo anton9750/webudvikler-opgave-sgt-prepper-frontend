@@ -10,7 +10,7 @@ export async function initHome() {
             fetchCategories()
         ]);
 
-        // Definer funktionen som knappen kalder
+        
         window.quickAdd = (id) => {
             const product = products.find(p => p.id == id);
             if (product) {

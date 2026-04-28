@@ -38,13 +38,11 @@ export async function initLogin() {
                     // Giv besked til Headeren om at opdatere (vis brugernavn i stedet for login-knap)
                     window.dispatchEvent(new Event('authChange'));
                     
-                    // Skift rute til profilen
-                    // Dette udløser din router.js til at køre initProfile
                     window.location.hash = '#/profile';
                 }
                 
             } catch (err) {
-                // Hvis login fejler (f.eks. 401 fra serveren)
+             
                 if (errorEl) {
                     errorEl.innerText = err.message;
                     errorEl.classList.remove('hidden');
