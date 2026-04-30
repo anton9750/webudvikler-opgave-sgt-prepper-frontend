@@ -16,7 +16,7 @@ export async function initProductDetail(params) {
             fetchCategories()
         ]);
 
-        // Log dataen i konsollen så du kan se præcis hvad API'et sender
+        // Log dataen i konsollen så man kan se præcis hvad API'et sender
         console.log("Produkt data modtaget:", product);
 
         if (!product) {
@@ -26,7 +26,7 @@ export async function initProductDetail(params) {
         // Definer funktionen til købsknappen
         window.handleAddToCart = () => {
             addToCart(product);
-            alert(`${product.name || product.title} er tilføjet til din udrustning!`);
+            alert(`${product.name || product.title} er tilføjet til din cart!`);
         };
 
         // Send data til Viewet

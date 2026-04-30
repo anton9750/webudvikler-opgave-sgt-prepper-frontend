@@ -28,7 +28,7 @@ export async function login(username, password) {
         } catch (e) { /* Ingen JSON body */ }
     }
 
-    // Dummy-fallback hvis CORS driller (som vi snakkede om)
+
     if (!token && res.ok) {
         token = "dummy-token-" + Date.now();
     }
@@ -47,19 +47,19 @@ export function isAuthenticated() {
     return !!localStorage.getItem('userToken');
 }
 
-// 3. LOGOUT (VIGTIG: skal have export - det var her fejlen var!)
+
 export function logout() {
     localStorage.removeItem('userToken');
     localStorage.removeItem('userName');
     
-    // Giv besked til headeren om at rydde navnet
+
     window.dispatchEvent(new Event('authChange'));
     
-    // Send brugeren væk fra profilen og hjem til forsiden
+
     window.location.hash = '#/';
 }
 
-// 4. VERIFY TOKEN (VIGTIG: skal have export)
+
 export async function verifyToken() {
     const token = localStorage.getItem('userToken');
     if (!token) return false;
