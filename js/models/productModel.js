@@ -1,27 +1,30 @@
-import { getProducts, getProductById } from '../utils/apiClient.js';
+import { getProducts } from '../utils/apiClient.js';
 
-/**
- * Henter alle produkter (bruges til forsiden)
- */
+
 export async function fetchProducts() {
     try {
-        const products = await getProducts();
-        return products;
+        return await getProducts();
     } catch (error) {
         console.error("Fejl i fetchProducts:", error);
         return [];
     }
 }
 
-/**
- * Henter ét specifikt produkt baseret på ID
- */
-export async function fetchProductById(id) {
+export async function fetchProductById(slug) {
     try {
-        const product = await getProductById(id);
+        const allProducts = await getProducts();
+        
+
+        const product = allProducts.find(p => p.slug === slug);
+        
+        if (!product) {
+            console.error(`Produktet med slug "${slug}" blev ikke fundet.`);
+            return null;
+        }
+        
         return product;
     } catch (error) {
-        console.error(`Fejl i fetchProductById for ID ${id}:`, error);
+        console.error("Fejl i fetchProductById:", error);
         throw error;
     }
 }
