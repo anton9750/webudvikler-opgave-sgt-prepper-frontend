@@ -23,7 +23,7 @@ const routes = {
     '/profile': initProfile, 
     '/privacy': 'privacy',
     '/about': 'about',
-    '/terms': 'terms' // Tilføjet rute til handelsbetingelser
+    '/terms': 'terms' 
 };
 
 /**
