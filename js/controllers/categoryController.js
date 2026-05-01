@@ -3,7 +3,7 @@ import { renderCategoryPage } from '../views/pages/categoryView.js';
 import { addToCart } from '../utils/cart.js';
 
 export async function initCategory(params) {
-    const slug = params.id; // I routeren hedder parameteren stadig :id, men det er nu en slug
+    const slug = params.id; 
     
     try {
         const [products, categories] = await Promise.all([

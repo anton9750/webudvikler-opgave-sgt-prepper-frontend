@@ -5,3 +5,4 @@ export async function initCart() {
     const cart = getCart();
     renderCart(cart, getCartTotal());
 }
+
