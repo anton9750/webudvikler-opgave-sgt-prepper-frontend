@@ -10,7 +10,7 @@ export function renderProductPage(product, categories) {
     const price = product.price ? Number(product.price).toFixed(2) : "0.00";
     const description = product.description || product.teaser || "Ingen beskrivelse tilgængelig fra bunkeren.";
     
-    // BILLEDE-LOGIK: Vi bygger den fulde sti til din Express-server
+
     let imgPath = product.imageUrl || product.image;
     let finalImg = "";
 
@@ -18,7 +18,7 @@ export function renderProductPage(product, categories) {
         if (imgPath.startsWith('http')) {
             finalImg = imgPath;
         } else {
-            // Sørg for at stien starter med / så vi ikke får "localhost:4000assets"
+         
             const separator = imgPath.startsWith('/') ? '' : '/';
             finalImg = `${BASE_SERVER_URL}${separator}${imgPath}`;
         }

@@ -11,10 +11,7 @@ import { renderTermsPage } from '../views/pages/termsView.js'; // Sørg for at d
 
 import { fetchCategories } from '../models/categoryModel.js';
 
-/**
- * Konfiguration af ruter
- * Nøglen er URL-stien, værdien er enten en controller-funktion eller en streng-id
- */
+
 const routes = {
     '/': initHome,
     '/category/:id': initCategory,
@@ -70,7 +67,7 @@ export async function initRouter() {
         
         if (!match) {
             console.error("Rute ikke fundet for:", location.hash);
-            // Man kunne her loade en 404 side
+           
             return;
         }
 

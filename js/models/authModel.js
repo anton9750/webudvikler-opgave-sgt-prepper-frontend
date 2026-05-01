@@ -21,12 +21,7 @@ export async function login(username, password) {
         token = token.split(' ')[1];
     }
 
-    if (!token) {
-        try {
-            const data = await res.json();
-            token = data.token;
-        } catch (e) { /* Ingen JSON body */ }
-    }
+   
 
 
     if (!token && res.ok) {
